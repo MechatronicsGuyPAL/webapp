@@ -1,0 +1,26 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>History Block</h1>
+
+    <div class="container"><br>
+      <form action"." method="post" >
+        Plesase select the appropriate option:<br>
+        <input type="submit" name="selection" value="Yes"><br>
+        <input type="submit" name="selection" value="No"><br>
+      </form>
+    </div>
+    <div><br><br>
+
+           {{ item.image }}<br>
+           {{ item.id}}<br>
+           {{ item.yes }}<br>
+           <img src="{{url_for('static',filename=item.image)}}">
+
+    </div><br><br><br><br>
+
+
+
+{% endblock %}
+
