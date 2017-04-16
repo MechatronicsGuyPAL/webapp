@@ -17,6 +17,7 @@ def index():
 @app.route('/history', methods=['GET', 'POST'])
 def history():
 
+
     if request.method == "GET":
         entries=CDA.query.filter(CDA.id>1).limit(1).first()
         return render_template('history.html',title='history',item=entries)
