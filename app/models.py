@@ -10,14 +10,14 @@ class CDA(db.Model):
     y2 = db.Column(db.SmallInteger)
     GT_status = db.Column(db.String(2),nullable=True)
     score = db.Column(db.Float)
-    votes = db.Column(db.SmallInteger)
-    yes = db.Column(db.Integer)
-    no = db.Column(db.Integer)
-    unsure = db.Column(db.SmallInteger)
+    votes = db.Column(db.SmallInteger,default=0)
+    yes = db.Column(db.Integer,default=0)
+    no = db.Column(db.Integer,default=0)
+    unsure = db.Column(db.SmallInteger,default=0)
     result = db.Column(db.SmallInteger,default=3)
     timestamp = db.Column(db.DateTime)
     testentry = db.Column(db.Boolean,default=False)
-    testanswer= db.Column(db.Boolean, nullable=True)
+    testanswer= db.Column(db.Boolean, default=False)
 
 
 
