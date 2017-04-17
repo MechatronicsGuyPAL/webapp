@@ -23,7 +23,7 @@ def history():
         return render_template('history.html',title='history',item=entries)
 
 
-
+    #updates the yes counts for the query request
     elif request.method == "POST":
         tempID = request.form.get(('numID'), type = int)
         entries=models.CDA.query.get(tempID)
