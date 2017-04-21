@@ -4,26 +4,28 @@
 {% block content %}
   <h1>History Block</h1>
 
-    <div class="container"><br>
+    <div class="container">
       <form action"." method="post" >
         Plesase select the appropriate option:<br>
         <input type="submit" name="selection" value="Yes"><br>
         <input type="submit" name="selection" value="No"><br>
         <input type="hidden" name="numID" value="{{item.id}}"><br>    
-        <input type="hidden" name="yescount" value="{{item.yes}}"><br>
-        <input type="hidden" name="nocount" value="{{item.no}}"><br>
+        <input type="hidden" name="yescount" value="{{item.yes}}">
+        <input type="hidden" name="nocount" value="{{item.no}}">
       </form>
     </div>
-    <div><br><br>
+    <div>
 
            {{ item.image }}<br>
            {{ item.id}}<br>
            {{ item.yes }}<br>
-           <img src="{{url_for('static',filename=item.image)}}">
+           <!--img src="{{url_for('static',filename=item.image)}}"-->
 
-    </div><br><br><br><br>
+    </div><br>
 
-
+<img id="home">
+<img id="test" width="200" height="200" src="static/Transparent.png">
+<!--img src="{{url_for('static',filename=item.image)}}" alt="crater" width= "300" height="200" style="background: 1280px 960px url_for('static',filename=item.image);">
 
 {% endblock %}
 
