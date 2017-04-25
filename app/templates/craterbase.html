@@ -1,12 +1,26 @@
 <html>
   <head>
     {% if title %}
-    <title>{{ title }} – base title</title>
+    <title>{{ title }} – craterbase title</title>
     {% else %}
     <title>base title default</title>
     {% endif %}
 
 
+
+  <style type="text/css">
+
+   #navlist{position: relative;}
+
+   #picture_to_evaluate {
+      width: {{attributes.width}}px;
+      height: {{attributes.height}}px;
+      background: url("static/{{item.image}}") -{{attributes.x_val}}px -{{attributes.y_val}}px;
+      zoom: {{attributes.zoom}};
+    }
+
+  </style>
+	
   <body>
 
     <div>Home: <a href="/index">Home</a></div>
