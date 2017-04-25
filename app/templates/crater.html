@@ -1,0 +1,39 @@
+<!-- extend from craterbase layout -->
+{% extends "craterbase.html" %}
+
+{% block content %}
+  <h1></h1>
+
+    <div class="container">
+      <form action"." method="post" >
+        Is this a crater?<br>
+        <input type="submit" name="selection" value="Yes"><br>
+        <input type="submit" name="selection" value="No"><br>
+        <input type="submit" name="selection" value="Unsure"><br>
+        <input type="hidden" name="numID" value="{{item.id}}"><br>
+        <input type="hidden" name="yescount" value="{{item.yes}}">
+        <input type="hidden" name="nocount" value="{{item.no}}">
+        <input type="hidden" name="unsurecount" value="{{item.unsure}}">
+      </form>
+    </div>
+
+<img id="picture_to_evaluate">
+    <div>
+           Zoom:{{ attributes.zoom }}<br>
+           X val:{{ attributes.x_val }}<br>
+           Y val{{ attributes.y_val }}<br>
+           Width:{{ attributes.width }}<br>
+           Height:{{ attributes.height }}<br><br><br>
+
+           Image name:{{ item.image }}<br>
+           ID:{{ item.id }}<br>
+           Yes:{{ item.yes }}<br>
+           No:{{ item.no }}<br>
+           Unsure:{{ item.unsure }}<br>
+           Certainty:{{ item.score  }}<br>
+           Timestamp:{{ item.timestamp  }}<br>
+
+    </div><br>
+
+
+{% endblock %}
