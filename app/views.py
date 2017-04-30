@@ -13,7 +13,7 @@ def index():
         return render_template('index.html',title='Home')
 
     elif request.method == "POST":
-        return redirect(url_for('history'))
+        return redirect(url_for('crater'))
 
 
 @app.route('/history', methods=['GET', 'POST'])
@@ -34,13 +34,26 @@ def history():
 @app.route('/crater', methods=['GET', 'POST'])
 def crater():
     def get_attributes(self):
-        width =  int(1.0*(self.x2 - self.x1))
-        height = int(1.0*(self.y2 - self.y1))
-        x_val = int(self.x1-int(0*width))
-        y_val = int(self.y1-int(0*width))
+        x1 = self.x1
+        x2 = self.x2
+        y1 = self.y1
+        y2 = self.y2        
+
+        scale_xy = 1.0
+        scale_wh = 2.0
+        width_raw = x2 - x1
+        height_raw = y2 - y1
+        center_x = x2-(0.5*width_raw)
+        center_y = y2-(0.5*height_raw)
+        x_val = center_x - scale_xy*width_raw
+        y_val = center_y - scale_xy*height_raw
+        width = scale_wh*width_raw
+        height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
         zoom = round(zoom_raw, 2)
+        print x1, x_val, x2, width_raw, width, center_x
         return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom) )
+        #return dict( width = int(width_raw), height = int(height_raw), x_val = int(x1), y_val = int(y1), zoom = float(zoom))
 
 
     def update_count(entry_field, form_field,entries):
@@ -58,6 +71,7 @@ def crater():
 
     def query_database():
             entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
+            #entries = CDA.query.filter(CDA.id >1).limit(1).first()
             return entries
 
 
