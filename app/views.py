@@ -1,11 +1,13 @@
-
 from flask import render_template, flash, session, g, request, url_for, redirect
 from app import app, db, models
 from .models import CDA
 from datetime import datetime
 from sqlalchemy import desc
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
+
+
+
 @app.route('/index', methods=['GET', 'POST'])
 def index():
 
@@ -20,12 +22,9 @@ def index():
 def history():
 
 
-    if request.method == "GET":
-       
+    if request.method == "GET":       
         return render_template('history.html',title='history')
 
-
-    #updates the yes counts for the query request
     elif request.method == "POST":
        return render_template('history.html',title='history')
 
@@ -51,9 +50,7 @@ def crater():
         height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
         zoom = round(zoom_raw, 2)
-        print x1, x_val, x2, width_raw, width, center_x
         return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom) )
-        #return dict( width = int(width_raw), height = int(height_raw), x_val = int(x1), y_val = int(y1), zoom = float(zoom))
 
 
     def update_count(entry_field, form_field,entries):
@@ -73,7 +70,6 @@ def crater():
             entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
             #entries = CDA.query.filter(CDA.id >1).limit(1).first()
             return entries
-
 
     if request.method == "GET":
         entries = query_database()
@@ -101,3 +97,62 @@ def crater():
             entries = query_database()
             attributes = get_attributes(entries)
             return render_template('crater.html',title='crater',item=entries, attributes = attributes)
+
+        elif request.form['selection']=='Re-Center':
+            tempID = request.form.get(('numID'), type = int)
+            entries=models.CDA.query.get(tempID)
+            attributes = get_attributes(entries)
+            return render_template('update_coords.html',title='update_coords',item=entries, attributes = attributes)
+
+
+
+@app.route('/update_coords', methods=['GET', 'POST'])
+def update_coords():
+
+    def get_attributes(self):
+        x1 = self.x1
+        x2 = self.x2
+        y1 = self.y1
+        y2 = self.y2        
+
+        scale_xy = 1.0
+        scale_wh = 2.0
+        width_raw = x2 - x1
+        height_raw = y2 - y1
+        center_x = x2-(0.5*width_raw)
+        center_y = y2-(0.5*height_raw)
+        x_val = center_x - scale_xy*width_raw
+        y_val = center_y - scale_xy*height_raw
+        width = scale_wh*width_raw
+        height = scale_wh*height_raw
+        zoom_raw = 400.0/(float(width))
+        zoom = round(zoom_raw, 2)
+        print x1, x_val, x2, width_raw, width, center_x
+        return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom) )
+
+
+
+    if request.method == "GET":
+        tempID = request.form.get(('numID'), type = int)
+        entries=models.CDA.query.get(tempID)
+        attributes=get_attributes(entries)
+        return render_template('update_coords.html',title='update_coords',item=entries, attributes = attributes)
+
+    elif request.method == "POST":
+
+        if request.form['recenter_status']=='finished':
+            tempID = request.form.get(('numID'), type = int)
+            entries=models.CDA.query.get(tempID)
+            attributes=get_attributes(entries)        
+            #return render_template('crater.html',title='crater',item=entries, attributes = attributes)
+            #return redirect(url_for('index'),title='crater',item=entries, attributes = attributes)
+            return redirect(url_for('crater'))
+
+        elif request.form['recenter_status']=='not_finished':
+            relativeX = request.form.get(('relX'), type = int)
+            relativeY = request.form.get(('relY'), type = int)
+            tempID = request.form.get(('numID'), type = int)
+            entries=models.CDA.query.get(tempID)
+            attributes=get_attributes(entries)
+            return render_template('update_coords.html',title='update_coords',item=entries, attributes = attributes)
+            #return redirect(url_for('crater'))

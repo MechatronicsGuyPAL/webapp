@@ -8,19 +8,25 @@
 
 
 
-  <style type="text/css">
+    <style type="text/css">
 
-   #navlist{position: relative;}
+     #navlist{position: relative;}
 
-   #picture_to_evaluate {
-      width: {{attributes.width}}px;
-      height: {{attributes.height}}px;
-      background: url("static/{{item.image}}") -{{attributes.x_val}}px -{{attributes.y_val}}px;
-      zoom: {{attributes.zoom}};
-    }
+     #picture_to_evaluate {
+        width: {{attributes.width}}px;
+        height: {{attributes.height}}px;
+        background: url("static/{{item.image}}") -{{attributes.x_val}}px -{{attributes.y_val}}px;
+        zoom: {{attributes.zoom}};
+      }
+    </style>
 
-  </style>
-	
+    <script type= text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>
+
+  </head>
+
+
+
+
   <body>
 
     <div>Home: <a href="/index">Home</a></div>
@@ -31,3 +37,4 @@
     {% block content %}{% endblock %}
   </body>
 </html>
+
