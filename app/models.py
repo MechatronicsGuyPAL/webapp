@@ -8,13 +8,9 @@ class CDA(db.Model):
     x2 = db.Column(db.SmallInteger)
     y1 = db.Column(db.SmallInteger)
     y2 = db.Column(db.SmallInteger)
-    GT_conflict = db.Column(db.Boolean,default=False)
     score = db.Column(db.Float)
+    GT_conflict = db.Column(db.Boolean,default=False)
     votes = db.Column(db.SmallInteger,default=0)
-    yes = db.Column(db.SmallInteger,default=0)
-    no = db.Column(db.SmallInteger,default=0)
-    unsure = db.Column(db.SmallInteger,default=0)
-    result = db.Column(db.SmallInteger,default=3)
     timestamp = db.Column(db.DateTime)
 
     def __repr__(self):
@@ -45,3 +41,21 @@ class Training(db.Model):
 
     def __repr__(self):
         return '<Training %r>' % self.id
+
+class Vote(db.Model):
+    __tablename__='votes'
+    id = db.Column(db.Integer, primary_key=True)
+    crater_id = db.Column(db.Integer, db.ForeignKey('CDA_results.id'))
+    start_timestamp = db.Column(db.DateTime)
+    end_timestamp = db.Column(db.DateTime)
+    vote_result = db.Column(db.String(1))
+    x1_new = db.Column(db.SmallInteger, nullable =True)
+    x2_new = db.Column(db.SmallInteger, nullable =True)
+    y1_new = db.Column(db.SmallInteger, nullable =True)
+    y2_new = db.Column(db.SmallInteger, nullable =True)
+    session_data = db.Column(db.String(120))    
+
+    def __repr__(self):
+        return '<Vote %r>' % self.id
+
+

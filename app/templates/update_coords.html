@@ -11,17 +11,17 @@
         Please Click in the center of the crater.<br>
         <input type="submit" name="jquery_finished" value="Finished"><br>
         <input type="hidden" name="numID" value="{{item.id}}">
-        <input type="hidden" name="recenter_status" value="finished"> 
+        <input type="hidden" name="recenter_status" value="finished">
       </form>
     </div>
-    
+<!-- Javascript code to make the image clickable and return click coordinates, 14 pixel offset from bottom-->
     <script type=text/javascript>
       $(document).ready(function() {
         $("#update_coords_image").click(function(e) {
 
           var offset = $(this).offset();
           var relativeX = Math.floor(e.pageX - offset.left);
-          var relativeY = Math.floor(e.pageY - offset.top);
+          var relativeY = Math.floor(offset.top - e.pageY + 14);
           alert(relativeX+':'+relativeY);
           setTimeout("Conversion()",3000000);
           $("#relX").val(relativeX);
@@ -40,7 +40,7 @@
           <input type=hidden id="relX" name="relX" value="">
           <input type=hidden id="relY" name="relY" value="">
           <input type="hidden" name="numID" value="{{item.id}}">
-          <input type="hidden" name="recenter_status" value="not_finished"> 
+          <input type="hidden" name="recenter_status" value="not_finished">
         </form>
       </div>
     </div>
@@ -68,9 +68,7 @@
 
            Image name:{{ item.image }}<br>
            ID:{{ item.id }}<br>
-           Yes:{{ item.yes }}<br>
-           No:{{ item.no }}<br>
-           Unsure:{{ item.unsure }}<br>
+
 
 
     </div><br>
@@ -78,3 +76,4 @@
 <img id="picture_to_evaluate">
 
 {% endblock %}
+
