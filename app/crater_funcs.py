@@ -24,7 +24,7 @@ class craterfunc:
         height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
         zoom = round(zoom_raw, 2)
-        return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom) )
+        return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom), x1=x1, x2=x2, y1=y1, y2=y2 )
 
     def get_new_attributes(self, entries, clickX, clickY):
         x1 = entries.x1
@@ -45,20 +45,32 @@ class craterfunc:
         zoom_raw = 400.0/(float(width))
         zoom = round(zoom_raw, 2)
 
-
-        shiftX = ((float(200 - clickX))/200.0)
-        shiftY = ((float(200 - clickY))/200.0)
-        newX = center_x - int(shiftX*width_raw)
-        newY = center_y + int(shiftY*width_raw)
+        shiftX = int(((float(200 - clickX))/200.0)*width_raw)
+        shiftY = int(((float(200 - clickY))/200.0)*width_raw)
+        #newX = center_x - int(shiftX*width_raw)
+        #newY = center_y + int(shiftY*width_raw)
+        newX = center_x - shiftX
+        newY = center_y + shiftY
         new_x_val = newX - scale_xy*width_raw
         new_y_val = newY - scale_xy*height_raw
 
-        print clickX
-        print clickY
-        print shiftX
-        print shiftY
+        x1_new = x1 - int(0.5*(float(shiftX)))
+        x2_new = x2 - int(0.5*(float(shiftX)))
+        y1_new = y1 + int(0.5*(float(shiftY)))
+        y2_new = y2 + int(0.5*(float(shiftY)))
+        print 'x1: ', x1
+        print 'x2: ', x2
+        print 'y1: ', y1
+        print 'y2: ', y2
+        print 'shiftX: ', shiftX
+        print 'shiftY: ', shiftY
+        print 'x1_new: ', x1_new
+        print 'y1_new: ', y1_new
+        print 'x2_new: ', x2_new
+        print 'y2_new: ', y2_new
 
-        return dict( width = int(width), height = int(height), x_val = int(new_x_val), y_val = int(new_y_val), zoom = float(zoom) )
+        return dict( width = int(width), height = int(height), x_val = int(new_x_val), y_val = int(new_y_val), zoom = float(zoom), x1=x1_new, x2=x2_new, y1=y1_new, y2=y2_new )
+
 
 
     def update_count(self, entry_field,entries):
@@ -79,12 +91,11 @@ class craterfunc:
 
     def query_database(self):
         entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
-        print entries.timestamp
         entries.timestamp = datetime.utcnow()
-        print entries.timestamp
         db.session.add(entries)
         db.session.commit()
         #entries = CDA.query.filter(CDA.id >1).limit(1).first()
-        print entries
-        print "query finished"
         return entries
+
+
+
