@@ -8,10 +8,10 @@
 
     <div class="container">
       <form action"." method="post" >
-        Please Click in the center of the crater.<br>
-        <input type="submit" name="jquery_finished" value="Finished"><br>
+         Please Click in the center of the crater.<br>
+        <!--input type="submit" name="jquery_finished" value="Cancel"><br>-->
         <input type="hidden" name="numID" value="{{item.id}}">
-        <input type="hidden" name="recenter_status" value="finished">
+        <input type="hidden" name="recenter_status" value="cancel">
       </form>
     </div>
 <!-- Javascript code to make the image clickable and return click coordinates, 14 pixel offset from bottom-->
@@ -40,7 +40,7 @@
           <input type=hidden id="relX" name="relX" value="">
           <input type=hidden id="relY" name="relY" value="">
           <input type="hidden" name="numID" value="{{item.id}}">
-          <input type="hidden" name="recenter_status" value="not_finished">
+          <input type="hidden" name="recenter_status" value="submit">
         </form>
       </div>
     </div>
@@ -72,8 +72,6 @@
 
 
     </div><br>
-
-<img id="picture_to_evaluate">
 
 {% endblock %}
 
