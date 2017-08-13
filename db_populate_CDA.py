@@ -6,13 +6,20 @@ from datetime import datetime
 
 #Delete old CDA entries before importing new data
 entries = models.CDA.query.all()
+n=0
 for entry in entries:
     db.session.delete(entry)
-
+    n+=1
+    if (n >= 500):
+        db.session.commit()
+        n=0
+        print("commit")
 db.session.commit()
 
+print("Cleared CDA, begin populate CDA")
+
 #Open CDA file and populate the CDA database table
-with open('app/static/CDA.json') as data_file:
+with open('app/static/CDA_full.json') as data_file:
         objects = [ i for i in json.load(data_file) ]
 
 for i, val in enumerate(objects):
@@ -25,20 +32,27 @@ for i, val in enumerate(objects):
                 score = objects[i]['rects'][j]['score'],
                 timestamp = datetime.utcnow())
                 db.session.add(record)
-
+        print("commit")
+        db.session.commit()
 db.session.commit()
-
-
+print("CDA populated")
 
 #Delete old database entries before importing new data
 entries = models.GroundTruth.query.all()
+n=0
 for entry in entries:
     db.session.delete(entry)
-
+    n+=1
+    if (n >= 500):
+        db.session.commit()
+        n=0
+        print("commit")
 db.session.commit()
 
+print("clear Ground Truth, begin populate GT")
+
 #Open CDA file and populate the CDA database table
-with open('app/static/groundtruth.json') as data_file:
+with open('app/static/groundtruth_full.json') as data_file:
         objects = [ i for i in json.load(data_file) ]
 
 for i, val in enumerate(objects):
@@ -49,6 +63,9 @@ for i, val in enumerate(objects):
                 y1 = objects[i]['rects'][j]['y1'],
                 y2 = objects[i]['rects'][j]['y2'])
                 db.session.add(record)
-
+        print("commit")
+        db.session.commit()
 db.session.commit()
+print("finished populate GT")
+
 

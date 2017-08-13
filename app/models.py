@@ -9,7 +9,7 @@ class CDA(db.Model):
     y1 = db.Column(db.SmallInteger)
     y2 = db.Column(db.SmallInteger)
     score = db.Column(db.Float)
-    GT_conflict = db.Column(db.Boolean,default=False)
+    GT_conflict = db.Column(db.Boolean,default=True)
     votes = db.Column(db.SmallInteger,default=0)
     timestamp = db.Column(db.DateTime)
 
