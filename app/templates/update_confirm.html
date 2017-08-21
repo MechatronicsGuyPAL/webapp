@@ -4,7 +4,7 @@
 {% block content %}
 
   <h1></h1>
-
+  <div data-role="page" data-url="{{ url_for('update_confirm') }}">
     <div class="container">
       <form action"." method="post" >
         Is this a crater?<br>
@@ -12,12 +12,15 @@
         <input type="submit" name="selection" value="Re-Center"><br>
         <input type="submit" name="selection" value="Cancel"><br>
         <input type="hidden" name="numID" value="{{item.id}}"><br>
+        <input type="hidden" name="x1" value="{{attributes.x1}}"><br>
+        <input type="hidden" name="x2" value="{{attributes.x2}}"><br>
+        <input type="hidden" name="y1" value="{{attributes.y1}}"><br>
+        <input type="hidden" name="y2" value="{{attributes.y2}}"><br>
       </form>
     </div>
 
 <img id="picture_to_evaluate">
-<img id="picture_to_evaluate" src="{{ url_for('static', filename='crater_outlineV2O40.png')}}">
-
+<img id="picture_to_evaluate" src="{{ url_for('static', filename='crater_outline.png')}}">
     <div>
            Zoom:{{ attributes.zoom }}<br>
            X val:{{ attributes.x_val }}<br>
@@ -31,7 +34,7 @@
            Timestamp:{{ item.timestamp  }}<br>
 
     </div><br>
-
+  </div>
 
 {% endblock %}
 

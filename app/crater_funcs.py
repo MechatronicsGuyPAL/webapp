@@ -6,6 +6,19 @@ from sqlalchemy import desc
 
 
 class craterfunc:
+    def session_num(self):
+        user_ip = str(request.remote_addr)
+        try:
+            first, second, third, fourth = [str(s) for s in user_ip.split('.')]
+            ses_num = first + second + third
+            print ses_num
+            return ses_num
+        except ValueError as e:
+            print "Failed to get user ip"
+            return "no_data"    
+
+
+    
     def get_attributes(self, entries):
         x1 = entries.x1
         x2 = entries.x2
@@ -24,7 +37,15 @@ class craterfunc:
         height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
         zoom = round(zoom_raw, 2)
-        return dict( width = int(width), height = int(height), x_val = int(x_val), y_val = int(y_val), zoom = float(zoom), x1=x1, x2=x2, y1=y1, y2=y2 )
+        return dict( width = int(width), 
+                    height = int(height), 
+                    x_val = int(x_val), 
+                    y_val = int(y_val), 
+                    zoom = float(zoom), 
+                    x1=x1, 
+                    x2=x2, 
+                    y1=y1,
+                    y2=y2 )
 
     def get_new_attributes(self, entries, clickX, clickY):
         x1 = entries.x1
@@ -58,33 +79,34 @@ class craterfunc:
         x2_new = x2 - int(0.5*(float(shiftX)))
         y1_new = y1 + int(0.5*(float(shiftY)))
         y2_new = y2 + int(0.5*(float(shiftY)))
-        print 'x1: ', x1
-        print 'x2: ', x2
-        print 'y1: ', y1
-        print 'y2: ', y2
-        print 'shiftX: ', shiftX
-        print 'shiftY: ', shiftY
-        print 'x1_new: ', x1_new
-        print 'y1_new: ', y1_new
-        print 'x2_new: ', x2_new
-        print 'y2_new: ', y2_new
 
-        return dict( width = int(width), height = int(height), x_val = int(new_x_val), y_val = int(new_y_val), zoom = float(zoom), x1=x1_new, x2=x2_new, y1=y1_new, y2=y2_new )
-
+        return dict( width = int(width), 
+                    height = int(height), 
+                    x_val = int(new_x_val), 
+                    y_val = int(new_y_val), 
+                    zoom = float(zoom), 
+                    x1=x1_new, 
+                    x2=x2_new, 
+                    y1=y1_new, 
+                    y2=y2_new )
 
 
     def update_count(self, entry_field,entries):
-
+        session_num = self.session_num()
         if entry_field == "yes":
-            temp = "y"
+            temp_entry = "y"
         elif entry_field == "no":
-            temp = "n"
+            temp_entry = "n"
         elif entry_field == "unsure":
-            temp = "u"
-        UserVote = models.Vote(crater_id = entries.id, vote_result = temp, start_timestamp = entries.timestamp, end_timestamp = datetime.utcnow() )
+            temp_entry = "u"
+        UserVote = models.Vote(crater_id = entries.id, 
+                                vote_result = temp_entry, 
+                                start_timestamp = entries.timestamp, 
+                                end_timestamp = datetime.utcnow(),
+                                session_data = session_num )
         db.session.add(UserVote)
-        temp = entries.votes + 1
-        entries.votes = temp
+        temp_vote = entries.votes + 1
+        entries.votes = temp_vote
         db.session.add(entries)
         db.session.commit()
         db.session.remove()
@@ -94,8 +116,25 @@ class craterfunc:
         entries.timestamp = datetime.utcnow()
         db.session.add(entries)
         db.session.commit()
-        #entries = CDA.query.filter(CDA.id >1).limit(1).first()
         return entries
 
+
+    def update_coords(self, entries, x1_new, x2_new, y1_new, y2_new):
+        session_num = self.session_num()
+        UserVote = models.Vote(crater_id = entries.id, 
+                                vote_result = "r", 
+                                start_timestamp = entries.timestamp, 
+                                end_timestamp = datetime.utcnow(), 
+                                x1_new = x1_new, 
+                                x2_new = x2_new, 
+                                y1_new = y1_new, 
+                                y2_new = y2_new,
+                                session_data = session_num )
+        db.session.add(UserVote)
+        temp_vote = entries.votes + 1
+        entries.votes = temp_vote
+        db.session.add(entries)
+        db.session.commit()
+        db.session.remove()
 
 
