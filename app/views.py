@@ -14,18 +14,22 @@ def index():
         return render_template('index.html',title='Home')
 
     elif request.method == "POST":
-        return redirect(url_for('crater', new_entry_flag = 1))
+        if request.form['selection']=='Training':
+            return redirect(url_for('training_1'))
+        elif request.form['selection']=='Start':
+            return redirect(url_for('crater', new_entry_flag = 1))
+        elif request.form['selection']=='Background':
+            return redirect(url_for('history'))
 
 
 @app.route('/history', methods=['GET', 'POST'])
 def history():
 
-
     if request.method == "GET":
         return render_template('history.html',title='history')
 
     elif request.method == "POST":
-       return render_template('history.html',title='history')
+       return redirect(url_for('training_1'))
 
 
 
@@ -38,8 +42,7 @@ def crater():
             new_entry_status = 1
         else:
             new_entry_status = int(request.args.get('new_entry_flag'))
-
-
+            
         if new_entry_status == 1:
             print new_entry_status
             entries = CF.query_database()
@@ -117,7 +120,7 @@ def update_confirm():
 
 
     if request.method == "GET":
-        print "update cinfirm get request"
+        print "update confirm get request"
         tempID = int(request.args.get('numID'))
         relativeX = int(request.args.get('relx'))
         relativeY = int(request.args.get('rely'))
@@ -143,3 +146,116 @@ def update_confirm():
             return redirect(url_for('crater', new_entry_flag = 0, numID=tempID))
 
 
+
+
+##### Below are only for training and information pages... 
+
+
+
+@app.route('/training_1', methods=['GET', 'POST'])
+def training_1():
+
+    if request.method == "GET":
+        return render_template('training_1.html',title='training_1')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_2'))
+
+@app.route('/training_2', methods=['GET', 'POST'])
+def training_2():
+
+    if request.method == "GET":
+        return render_template('training_2.html',title='training_2')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_3'))
+
+@app.route('/training_3', methods=['GET', 'POST'])
+def training_3():
+
+    if request.method == "GET":
+        return render_template('training_3.html',title='training_3')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_4'))
+
+@app.route('/training_4', methods=['GET', 'POST'])
+def training_4():
+
+    if request.method == "GET":
+        return render_template('training_4.html',title='training_4')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_5'))
+
+@app.route('/training_5', methods=['GET', 'POST'])
+def training_5():
+
+    if request.method == "GET":
+        return render_template('training_5.html',title='training_5')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_6'))
+
+
+@app.route('/training_6', methods=['GET', 'POST'])
+def training_6():
+
+    if request.method == "GET":
+        return render_template('training_6.html',title='training_6')
+
+    elif request.method == "POST":
+        if request.form['selection']=='Yes':
+            return redirect(url_for('training_7'))
+        else:
+            return render_template('training_6.html',title='training_6')
+
+
+@app.route('/training_7', methods=['GET', 'POST'])
+def training_7():
+
+    if request.method == "GET":
+        return render_template('training_7.html',title='training_7')
+
+    elif request.method == "POST":
+        if request.form['selection']=='No':
+            return redirect(url_for('training_8'))
+        else:
+            return render_template('training_7.html',title='training_7')
+
+@app.route('/training_8', methods=['GET', 'POST'])
+def training_8():
+
+    if request.method == "GET":
+        return render_template('training_8.html',title='training_8')
+
+    elif request.method == "POST":
+        if request.form['selection']=='Re-Center':
+            return redirect(url_for('training_9'))
+        else:
+            return render_template('training_8.html',title='training_8')
+
+
+@app.route('/training_9', methods=['GET', 'POST'])
+def training_9():
+
+    if request.method == "GET":
+        return render_template('training_9.html',title='training_9')
+
+    elif request.method == "POST":
+        if request.form['selection']=='Confirm':
+            return redirect(url_for('training_finished'))
+        else:
+            return render_template('training_9.html',title='training_9')
+
+@app.route('/training_finished', methods=['GET', 'POST'])
+def training_finished():
+
+    if request.method == "GET":
+        return render_template('training_finished.html',title='training_finished')
+
+    elif request.method == "POST":
+        if request.form['selection']=='Go_Back':
+            return redirect(url_for('training_1'))
+        elif request.form['selection']=='Start':
+            return redirect(url_for('crater', new_entry_flag = 1))
