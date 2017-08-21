@@ -82,8 +82,6 @@ def crater():
 
         elif request.form['selection']=='Re-Center':
             tempID = request.form.get(('numID'), type = int)
-            entries=models.CDA.query.get(tempID)
-            attributes = CF.get_attributes(entries)
             return redirect(url_for('update_coords',numID=tempID))
 
 
@@ -101,16 +99,12 @@ def update_coords():
     elif request.method == "POST":
         if request.form['recenter_status']=='cancel':
             tempID = request.form.get(('numID'), type = int)
-            entries=models.CDA.query.get(tempID)
-            attributes=CF.get_attributes(entries)
             return redirect(url_for('crater', new_entry_flag = 0, numID=tempID))
 
         elif request.form['recenter_status']=='submit':
             relativeX = request.form.get(('relX'), type = int)
             relativeY = request.form.get(('relY'), type = int)
             tempID = request.form.get(('numID'), type = int)
-            #entries=models.CDA.query.get(tempID)
-            #attributes=CF.get_new_attributes(entries, relativeX, relativeY)
             return redirect(url_for('update_confirm',numID=tempID, relx = relativeX, rely = relativeY))
 
 
@@ -135,8 +129,13 @@ def update_confirm():
             return redirect(url_for('update_coords',numID=tempID))
 
         elif request.form['selection']=='Confirm':
-
-
+            tempID = int(request.form.get('numID'))
+            x1_new = int(request.form.get('x1'))
+            x2_new = int(request.form.get('x2'))
+            y1_new = int(request.form.get('y1'))
+            y2_new = int(request.form.get('y2'))
+            entries=models.CDA.query.get(tempID)
+            CF.update_coords(entries, x1_new, x2_new, y1_new, y2_new)
             return redirect(url_for('crater', new_entry_flag = 1))
 
 
@@ -230,10 +229,8 @@ def training_8():
         return render_template('training_8.html',title='training_8')
 
     elif request.method == "POST":
-        if request.form['selection']=='Re-Center':
-            return redirect(url_for('training_9'))
-        else:
-            return render_template('training_8.html',title='training_8')
+        return redirect(url_for('training_9'))
+
 
 
 @app.route('/training_9', methods=['GET', 'POST'])
@@ -243,10 +240,8 @@ def training_9():
         return render_template('training_9.html',title='training_9')
 
     elif request.method == "POST":
-        if request.form['selection']=='Confirm':
-            return redirect(url_for('training_finished'))
-        else:
-            return render_template('training_9.html',title='training_9')
+        return redirect(url_for('training_finished'))
+
 
 @app.route('/training_finished', methods=['GET', 'POST'])
 def training_finished():
