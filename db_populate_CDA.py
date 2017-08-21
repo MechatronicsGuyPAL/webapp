@@ -19,7 +19,7 @@ db.session.commit()
 print("Cleared CDA, begin populate CDA")
 
 #Open CDA file and populate the CDA database table
-with open('app/static/CDA_full.json') as data_file:
+with open('app/static/CDA.json') as data_file:
         objects = [ i for i in json.load(data_file) ]
 
 for i, val in enumerate(objects):
@@ -52,7 +52,7 @@ db.session.commit()
 print("clear Ground Truth, begin populate GT")
 
 #Open CDA file and populate the CDA database table
-with open('app/static/groundtruth_full.json') as data_file:
+with open('app/static/groundtruth.json') as data_file:
         objects = [ i for i in json.load(data_file) ]
 
 for i, val in enumerate(objects):
