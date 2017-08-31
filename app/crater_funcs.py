@@ -18,7 +18,7 @@ class craterfunc:
             return "no_data"    
 
 
-    
+
     def get_attributes(self, entries):
         x1 = entries.x1
         x2 = entries.x2
@@ -94,11 +94,11 @@ class craterfunc:
     def update_count(self, entry_field,entries):
         session_num = self.session_num()
         if entry_field == "yes":
-            temp_entry = "y"
+            temp_entry = "yes"
         elif entry_field == "no":
-            temp_entry = "n"
+            temp_entry = "no"
         elif entry_field == "unsure":
-            temp_entry = "u"
+            temp_entry = "unsure"
         UserVote = models.Vote(crater_id = entries.id, 
                                 vote_result = temp_entry, 
                                 start_timestamp = entries.timestamp, 
@@ -113,6 +113,7 @@ class craterfunc:
 
     def query_database(self):
         entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
+        #entries = CDA.query.filter(and_(CDA.GT_conflict == True, CDA.votes < 15,)).order_by(CDA.timestamp).limit(1).first()
         entries.timestamp = datetime.utcnow()
         db.session.add(entries)
         db.session.commit()
@@ -122,7 +123,7 @@ class craterfunc:
     def update_coords(self, entries, x1_new, x2_new, y1_new, y2_new):
         session_num = self.session_num()
         UserVote = models.Vote(crater_id = entries.id, 
-                                vote_result = "r", 
+                                vote_result = "recenter", 
                                 start_timestamp = entries.timestamp, 
                                 end_timestamp = datetime.utcnow(), 
                                 x1_new = x1_new, 

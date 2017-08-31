@@ -2,6 +2,8 @@
 from app import db, models
 
 
+#known issue, in python, boolean valuse stored as "False/True", but json reads boolean as "false/true". in order to import the json, use a find and replace on the file to alter the text.
+
 #set value depending on whether the JSON file is being used for the web app
 #or if it is for use with the CDA. 
 webapp = True
@@ -20,7 +22,7 @@ imagestring = 'none'
 print('creating JSON')
 # open JSON file to write crater windows to
 if webapp == True:
-    jsonfile = open('data/jsons/webapp_data.json','w')
+    jsonfile = open('data/jsons/webapp_data_V2.json','w')
 else:
     jsonfile = open('data/jsons/CDA_training_data.json','w')
 
@@ -37,6 +39,7 @@ for i, val in enumerate(entries):
     y1 = entries[i].y1
     y2 = entries[i].y2
     GT_conflict = entries[i].GT_conflict
+    var2 = entries[i].var2
 
     #check if current entry is the same image as previous entry
     if imagestring != entries[i].image:
@@ -60,7 +63,8 @@ for i, val in enumerate(entries):
     jsonfile.write('"y1": {}.0,\n'.format(y1))
     jsonfile.write('"y2": {}.0,\n'.format(y2))
     if webapp == True:
-        jsonfile.write('"conflict": {}\n'.format(GT_conflict))
+        jsonfile.write('"GT_conflict": {},\n'.format(GT_conflict))
+        jsonfile.write('"IOU": {}\n'.format(var2))
     jsonfile.write('}')
 
 jsonfile.write('\n]\n}\n]')
