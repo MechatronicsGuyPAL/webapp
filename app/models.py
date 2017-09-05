@@ -39,7 +39,7 @@ class Vote(db.Model):
     crater_id = db.Column(db.Integer, db.ForeignKey('CDA_results.id'))
     start_timestamp = db.Column(db.DateTime)
     end_timestamp = db.Column(db.DateTime)
-    vote_resul = db.Column(db.String(20))
+    vote_result = db.Column(db.String(20))
     x1_new = db.Column(db.SmallInteger, nullable =True)
     x2_new = db.Column(db.SmallInteger, nullable =True)
     y1_new = db.Column(db.SmallInteger, nullable =True)

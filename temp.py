@@ -6,9 +6,8 @@ from pprint import pprint
 
 
 
-entries = models.Vote.query.all()
+votes = models.Vote.query.all()
 
-for entry in entries:
-    db.session.delete(entry)
-db.session.commit()
+for i, val in enumerate(votes):
+    print("number: {}, Crater: {}, result: {}".format(votes[i].id, votes[i].crater_id, votes[i].vote_result))
 

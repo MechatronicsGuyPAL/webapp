@@ -2,7 +2,7 @@ from flask import render_template, flash, session, g, request, url_for, redirect
 from app import app, db, models
 from .models import CDA
 from datetime import datetime
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 
 
 class craterfunc:
@@ -112,8 +112,31 @@ class craterfunc:
         db.session.remove()
 
     def query_database(self):
-        entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
-        #entries = CDA.query.filter(and_(CDA.GT_conflict == True, CDA.votes < 15,)).order_by(CDA.timestamp).limit(1).first()
+        #entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
+        #entries = CDA.query.filter(CDA.id == 2).limit(1).first()
+        test_val = .85
+        entries = None
+        time_since_flag = False
+        while entries is None:
+            test_val -= 0.05
+            entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(1).first()
+            print("query, test val at {}".format(test_val))
+            if ((entries is not None) and (self.query_time_since(entries) < 30)):
+                    print("query time exceeded")
+                    entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(500)
+                    for entry in entries:
+                        if (self.query_time_since(entry) >= 15):
+                            time_since_flag = True
+                            entries = entry
+                            minutes = self.query_time_since(entry)
+                            print("{} minutes since last query, IOU is {}".format(minutes, entries.IOU))
+                            break
+                    if time_since_flag == False:
+                        entries = None
+
+
+        
+
         entries.timestamp = datetime.utcnow()
         db.session.add(entries)
         db.session.commit()
@@ -138,4 +161,9 @@ class craterfunc:
         db.session.commit()
         db.session.remove()
 
-
+    def query_time_since(self, entry):
+        last_query = entry.timestamp
+        current_query = datetime.utcnow()
+        time_since = current_query - last_query
+        minutes = (int(time_since.total_seconds())/60)
+        return minutes
