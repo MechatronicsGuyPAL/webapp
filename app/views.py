@@ -17,9 +17,25 @@ def index():
         if request.form['selection']=='Training':
             return redirect(url_for('training_1'))
         elif request.form['selection']=='Start':
-            return redirect(url_for('crater', new_entry_flag = 1))
+            return redirect(url_for('consent'))
         elif request.form['selection']=='Background':
             return redirect(url_for('history'))
+
+
+@app.route('/consent', methods=['GET', 'POST'])
+def consent():
+
+    if request.method == "GET":
+        return render_template('consent.html',title='Consent')
+
+    elif request.method == "POST":
+        if (request.form['selection']=='Start'): 
+            try:
+                if (request.form['consent'] == 'Yes'):
+                    return redirect(url_for('crater', new_entry_flag = 1))
+            except:
+                pass
+        return redirect(url_for('consent'))
 
 
 @app.route('/history', methods=['GET', 'POST'])
@@ -253,4 +269,4 @@ def training_finished():
         if request.form['selection']=='Go_Back':
             return redirect(url_for('training_1'))
         elif request.form['selection']=='Start':
-            return redirect(url_for('crater', new_entry_flag = 1))
+            return redirect(url_for('consent'))

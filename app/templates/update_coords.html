@@ -8,13 +8,15 @@
 
     <div class="container">
       <form action"." method="post" >
-         Please Click in the center of the crater.<br>
-        <!--input type="submit" name="jquery_finished" value="Cancel"><br>-->
+        Please Click in the center of the crater.<br>
+        <input type="submit" name="jquery_finished" value="Cancel"><br>
         <input type="hidden" name="numID" value="{{item.id}}">
         <input type="hidden" name="recenter_status" value="cancel">
       </form>
     </div>
 <!-- Javascript code to make the image clickable and return click coordinates, 14 pixel offset from bottom-->
+<!-- alert code segment removed from javascript, reinsert beneath variables to get popup window on click-->
+<!--  alert(relativeX+':'+relativeY); -->
     <script type=text/javascript>
       $(document).ready(function() {
         $("#update_coords_image").click(function(e) {
@@ -22,12 +24,12 @@
           var offset = $(this).offset();
           var relativeX = Math.floor(e.pageX - offset.left);
           var relativeY = Math.floor(offset.top - e.pageY + 14);
-          alert(relativeX+':'+relativeY);
+          
           setTimeout("Conversion()",3000000);
           $("#relX").val(relativeX);
 
           $("#relY").val(relativeY);
-
+          
           $( '#jquery_click_data').submit();
         });
       });
@@ -44,8 +46,6 @@
         </form>
       </div>
     </div>
-
-
 
 
 
@@ -74,4 +74,6 @@
     </div><br>
 
 {% endblock %}
+
+           
 
