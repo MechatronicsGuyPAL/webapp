@@ -7,15 +7,15 @@
   <div data-role="page" data-url="{{ url_for('update_confirm') }}">
     <div class="container">
       <form action"." method="post" >
-        Is this a crater?<br>
+        Is the crater centered?<br>
         <input type="submit" name="selection" value="Confirm"><br>
         <input type="submit" name="selection" value="Re-Center"><br>
         <input type="submit" name="selection" value="Cancel"><br>
         <input type="hidden" name="numID" value="{{item.id}}"><br>
-        <input type="hidden" name="x1" value="{{attributes.x1}}"><br>
-        <input type="hidden" name="x2" value="{{attributes.x2}}"><br>
-        <input type="hidden" name="y1" value="{{attributes.y1}}"><br>
-        <input type="hidden" name="y2" value="{{attributes.y2}}"><br>
+        <input type="hidden" name="x1" value="{{attributes.x1}}">
+        <input type="hidden" name="x2" value="{{attributes.x2}}">
+        <input type="hidden" name="y1" value="{{attributes.y1}}">
+        <input type="hidden" name="y2" value="{{attributes.y2}}">
       </form>
     </div>
 
@@ -24,14 +24,13 @@
     <div>
            Zoom:{{ attributes.zoom }}<br>
            X val:{{ attributes.x_val }}<br>
-           Y val{{ attributes.y_val }}<br>
+           Y val:{{ attributes.y_val }}<br>
            Width:{{ attributes.width }}<br>
-           Height:{{ attributes.height }}<br><br><br>
 
            Image name:{{ item.image }}<br>
            ID:{{ item.id }}<br>
            Certainty:{{ item.score  }}<br>
-           Timestamp:{{ item.timestamp  }}<br>
+           
 
     </div><br>
   </div>

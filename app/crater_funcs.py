@@ -32,7 +32,11 @@ class craterfunc:
         center_x = x2-(0.5*width_raw)
         center_y = y2-(0.5*height_raw)
         x_val = center_x - scale_xy*width_raw
+        if x_val <= 0:
+            x_val = 0
         y_val = center_y - scale_xy*height_raw
+        if y_val <= 0:
+            y_val = 0
         width = scale_wh*width_raw
         height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
@@ -60,7 +64,11 @@ class craterfunc:
         center_x = x2-(0.5*width_raw)
         center_y = y2-(0.5*height_raw)
         x_val = center_x - scale_xy*width_raw
+        if x_val <= 0:
+            x_val = 0
         y_val = center_y - scale_xy*height_raw
+        if y_val <= 0:
+            y_val = 0
         width = scale_wh*width_raw
         height = scale_wh*height_raw
         zoom_raw = 400.0/(float(width))
@@ -73,7 +81,11 @@ class craterfunc:
         newX = center_x - shiftX
         newY = center_y + shiftY
         new_x_val = newX - scale_xy*width_raw
+        if new_x_val <= 0:
+            new_x_val = 0        
         new_y_val = newY - scale_xy*height_raw
+        if new_y_val <= 0:
+            new_y_val = 0
 
         x1_new = x1 - int(0.5*(float(shiftX)))
         x2_new = x2 - int(0.5*(float(shiftX)))
@@ -121,11 +133,11 @@ class craterfunc:
             test_val -= 0.05
             entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(1).first()
             print("query, test val at {}".format(test_val))
-            if ((entries is not None) and (self.query_time_since(entries) < 30)):
+            if ((entries is not None) and (self.query_time_since(entries) < 60)):
                     print("query time exceeded")
                     entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(500)
                     for entry in entries:
-                        if (self.query_time_since(entry) >= 15):
+                        if (self.query_time_since(entry) >= 60):
                             time_since_flag = True
                             entries = entry
                             minutes = self.query_time_since(entry)
