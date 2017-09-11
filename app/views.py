@@ -20,7 +20,17 @@ def index():
             return redirect(url_for('consent'))
         elif request.form['selection']=='Background':
             return redirect(url_for('history'))
+        elif request.form['selection']=='Participant_Information':
+            return redirect(url_for('legal')) 
 
+@app.route('/legal', methods=['GET', 'POST'])
+def legal():
+
+    if request.method == "GET":
+        return render_template('legal.html',title='legal')
+
+    elif request.method == "POST":
+       return redirect(url_for('training_1'))
 
 @app.route('/consent', methods=['GET', 'POST'])
 def consent():
