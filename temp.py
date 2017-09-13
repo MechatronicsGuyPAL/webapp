@@ -6,13 +6,15 @@ vote_list = []
 
 
 votes = models.Vote.query.all()
+finished_craters = 0
+total_votes = 0
 
 
 for i, val in enumerate(votes):
     if not votes[i].crater_id in vote_list:
         vote_list.append(votes[i].crater_id)
 
-print("{} toal craters evaluated".format(len(vote_list)))
+
     
 
 for n, val in enumerate(vote_list):
@@ -38,12 +40,18 @@ for n, val in enumerate(vote_list):
                                                                     votes[x].y1_new, 
                                                                     votes[x].x2_new, 
                                                                     votes[x].y2_new))
+    if v_num == 15:
+        finished_craters += 1
+    total_votes += v_num
+
     print("______ Result Crater ID {}: Yes: {}, No: {}, Unsure: {}, Re_Center {}, Total: {}".format(vote_list[n],
                                                                                         y_num,
                                                                                         n_num,
                                                                                         u_num,
                                                                                         r_num,
                                                                                         v_num))
+print("{} total craters evaluated".format(len(vote_list)))
+print("Finished craters: {}, total votes: {}".format(finished_craters, total_votes))
 
 
 

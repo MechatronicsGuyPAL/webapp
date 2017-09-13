@@ -137,7 +137,7 @@ class craterfunc:
                     print("query time exceeded")
                     entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(500)
                     for entry in entries:
-                        if (self.query_time_since(entry) >= 60):
+                        if ((self.query_time_since(entry) >= 60) or (test_val < 0.2)):
                             time_since_flag = True
                             entries = entry
                             minutes = self.query_time_since(entry)
