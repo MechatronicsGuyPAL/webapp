@@ -130,7 +130,7 @@ class craterfunc:
         entries = None
         time_since_flag = False
         while entries is None:
-            test_val -= 0.1
+            test_val -= 0.05
             entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(1).first()
             print("query, test val at {}".format(test_val))
             if ((entries is not None) and (self.query_time_since(entries) < 60)):
