@@ -126,7 +126,7 @@ class craterfunc:
     def query_database(self):
         #entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
         #entries = CDA.query.filter(CDA.id == 2).limit(1).first()
-        test_val = .7
+        test_val = .5
         entries = None
         time_since_flag = False
         while entries is None:
