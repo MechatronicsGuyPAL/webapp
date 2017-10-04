@@ -49,7 +49,8 @@ class craterfunc:
                     x1=x1, 
                     x2=x2, 
                     y1=y1,
-                    y2=y2 )
+                    y2=y2,
+                    var1=entries.var1 )
 
     def get_new_attributes(self, entries, clickX, clickY):
         x1 = entries.x1
@@ -100,7 +101,8 @@ class craterfunc:
                     x1=x1_new, 
                     x2=x2_new, 
                     y1=y1_new, 
-                    y2=y2_new )
+                    y2=y2_new,
+                    var1=entries.var1 )
 
 
     def update_count(self, entry_field,entries):
@@ -124,18 +126,16 @@ class craterfunc:
         db.session.remove()
 
     def query_database(self):
-        #entries = CDA.query.filter(CDA.score >= 0.09).order_by(CDA.timestamp).limit(1).first()
-        #entries = CDA.query.filter(CDA.id == 2).limit(1).first()
         test_val = .5
         entries = None
         time_since_flag = False
         while entries is None:
             test_val -= 0.05
-            entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(1).first()
+            entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.var1 == 'empty')).order_by(CDA.timestamp.desc()).limit(1).first()
             print("query, test val at {}".format(test_val))
             if ((entries is not None) and (self.query_time_since(entries) < 60)):
                     print("query time exceeded")
-                    entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15)).order_by(CDA.timestamp.desc()).limit(500)
+                    entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.var1 == 'empty')).order_by(CDA.timestamp.desc()).limit(500)
                     for entry in entries:
                         if ((self.query_time_since(entry) >= 60) ):
                             time_since_flag = True
@@ -145,15 +145,14 @@ class craterfunc:
                             break
                     if time_since_flag == False:
                         entries = None
+ 
 
+            
 
-        
-
-        entries.timestamp = datetime.utcnow()
-        db.session.add(entries)
-        db.session.commit()
+            entries.timestamp = datetime.utcnow()
+            db.session.add(entries)
+            db.session.commit()
         return entries
-
 
     def update_coords(self, entries, x1_new, x2_new, y1_new, y2_new):
         session_num = self.session_num()
@@ -179,3 +178,56 @@ class craterfunc:
         time_since = current_query - last_query
         minutes = (int(time_since.total_seconds())/60)
         return minutes
+
+    def super_user_query(self):
+            try:
+                entries = CDA.query.filter(CDA.var1 == 'review').order_by(CDA.score.desc()).limit(1).first()
+                entries.timestamp = datetime.utcnow()
+                db.session.add(entries)
+                db.session.commit()
+            except:
+                entries = None
+            return entries
+
+
+    def super_user_update_entry(self, entry_field,entries):
+        session_num = self.session_num()
+        if entry_field == "yes":
+            temp_entry = "yes"
+        elif entry_field == "no":
+            temp_entry = "no"
+        elif entry_field == "unsure":
+            temp_entry = "review"
+        entries.var1 = temp_entry
+        entries.timestamp = datetime.utcnow()
+
+        UserVote = models.Vote(crater_id = entries.id, 
+                                vote_result = temp_entry, 
+                                start_timestamp = entries.timestamp, 
+                                end_timestamp = datetime.utcnow(),
+                                session_data = session_num,
+                                var2 = 'super_user_vote')
+        db.session.add(UserVote)
+        db.session.add(entries)
+        db.session.commit()
+        db.session.remove()
+
+    def super_user_update_coords(self, entries, x1_new, x2_new, y1_new, y2_new):
+        session_num = self.session_num()
+        UserVote = models.Vote(crater_id = entries.id, 
+                                vote_result = "recenter", 
+                                start_timestamp = entries.timestamp, 
+                                end_timestamp = datetime.utcnow(), 
+                                x1_new = x1_new, 
+                                x2_new = x2_new, 
+                                y1_new = y1_new, 
+                                y2_new = y2_new,
+                                session_data = session_num,
+                                var2 = 'super_user_vote')
+        db.session.add(UserVote)
+        entries.var1 = 'recenter'
+        entries.timestamp = datetime.utcnow()
+        db.session.add(entries)
+        db.session.commit()
+        db.session.remove()
+

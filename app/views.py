@@ -170,8 +170,150 @@ def update_confirm():
             tempID = request.form.get(('numID'), type = int)
             return redirect(url_for('crater', new_entry_flag = 0, numID=tempID))
 
+@app.route('/review', methods=['GET', 'POST'])
+def review():
+    if request.method == "GET":
+        return render_template('review.html', title='review')
+
+    if request.method == "POST":
+        password = False
+        try:
+            text = request.form['text']
+            if text == "geologyrocks":
+                password = True
+        except:
+            password = False
+        if password == True:
+            return redirect(url_for('super_user_crater', new_entry_flag = 1))
+        else:
+            return redirect(url_for('index'))
 
 
+@app.route('/super_user_crater', methods=['GET', 'POST'])
+def super_user_crater():
+    CF=crater_funcs.craterfunc()
+
+    if request.method == "GET":
+        if request.args.get('new_entry_flag') is None:
+            new_entry_status = 1
+        else:
+            new_entry_status = int(request.args.get('new_entry_flag'))
+            
+        if new_entry_status == 1:
+            print new_entry_status
+            entries = CF.super_user_query()
+            attributes=CF.get_attributes(entries)
+            return render_template('super_user_crater.html',title='super_user_crater',item=entries, attributes = attributes)
+
+        if new_entry_status == 0:
+            print new_entry_status
+            tempID = int(request.args.get('numID'))
+            entries=models.CDA.query.get(tempID)
+            attributes=CF.get_attributes(entries)
+            return render_template('super_user_crater.html',title='super_user_crater',item=entries, attributes = attributes)
+
+
+
+    elif request.method == "POST":
+
+        try:
+            temp = request.form['selection']
+            if ((temp != 'Yes') and (temp != 'No') and (temp != 'Unsure') and (temp != 'Re-Center')):
+                return redirect(url_for('super_user_crater', new_entry_flag = 1))
+        except:
+            return redirect(url_for('super_user_crater', new_entry_flag = 1))
+     
+
+        tempID = request.form.get(('numID'), type = int)
+        entries=models.CDA.query.get(tempID)
+
+        if request.form['selection']=='Yes':
+            CF.super_user_update_entry("yes", entries)
+            entries = CF.super_user_query()
+            attributes = CF.get_attributes(entries)
+            return render_template('super_user_crater.html',title='super_user_crater',item=entries, attributes = attributes)
+
+        elif request.form['selection']=='No':
+            CF.super_user_update_entry("no", entries)
+            entries = CF.super_user_query()
+            attributes = CF.get_attributes(entries)
+            return render_template('super_user_crater.html',title='super_user_crater',item=entries, attributes = attributes)
+
+        elif request.form['selection']=='Unsure':
+            CF.super_user_update_entry("unsure", entries)
+            entries = CF.super_user_query()
+            attributes = CF.get_attributes(entries)
+            return render_template('super_user_crater.html',title='super_user_crater',item=entries, attributes = attributes)
+
+        elif request.form['selection']=='Re-Center':
+            tempID = request.form.get(('numID'), type = int)
+            return redirect(url_for('super_user_update_coords',numID=tempID))
+
+@app.route('/super_user_update_coords', methods=['GET', 'POST'])
+def super_user_update_coords():
+    CF=crater_funcs.craterfunc()
+
+    if request.method == "GET":
+        tempID = int(request.args.get('numID'))
+        entries=models.CDA.query.get(tempID)
+        attributes=CF.get_attributes(entries)
+        return render_template('super_user_update_coords.html',title='super_user_update_coords',item=entries, attributes = attributes)
+
+
+    elif request.method == "POST":
+        if request.form['recenter_status']=='cancel':
+            tempID = request.form.get(('numID'), type = int)
+            return redirect(url_for('super_user_crater', new_entry_flag = 0, numID=tempID))
+
+        elif request.form['recenter_status']=='submit':
+            relativeX = request.form.get(('relX'), type = int)
+            relativeY = request.form.get(('relY'), type = int)
+            tempID = request.form.get(('numID'), type = int)
+            return redirect(url_for('super_user_update_confirm',numID=tempID, relx = relativeX, rely = relativeY))
+
+
+@app.route('/super_user_update_confirm', methods=['GET', 'POST'])
+def super_user_update_confirm():
+    CF=crater_funcs.craterfunc()
+
+
+    if request.method == "GET":
+        print "update confirm get request"
+        tempID = int(request.args.get('numID'))
+        relativeX = int(request.args.get('relx'))
+        relativeY = int(request.args.get('rely'))
+        entries=models.CDA.query.get(tempID)
+        attributes=CF.get_new_attributes(entries, relativeX, relativeY)
+        return render_template('super_user_update_confirm.html',title='super_user_update_confirm',item=entries, attributes = attributes)
+
+
+    elif request.method == "POST":
+        try:
+            temp = request.form['selection']
+            if ((temp != 'Confirm') and (temp != 'Re-Center') and (temp != 'Cancel')):
+                return redirect(url_for('super_user_crater', new_entry_flag = 1))
+        except:
+            return redirect(url_for('super_user_crater', new_entry_flag = 1))
+
+        if request.form['selection']=='Re-Center':
+            tempID = request.form.get(('numID'), type = int)
+            return redirect(url_for('super_user_update_coords',numID=tempID))
+
+        elif request.form['selection']=='Confirm':
+            tempID = int(request.form.get('numID'))
+            x1_new = int(request.form.get('x1'))
+            x2_new = int(request.form.get('x2'))
+            y1_new = int(request.form.get('y1'))
+            y2_new = int(request.form.get('y2'))
+            entries=models.CDA.query.get(tempID)
+            CF.super_user_update_coords(entries, x1_new, x2_new, y1_new, y2_new)
+            return redirect(url_for('super_user_crater', new_entry_flag = 1))
+
+
+
+        elif request.form['selection']=='Cancel':
+            tempID = request.form.get(('numID'), type = int)
+            return redirect(url_for('super_user_crater', new_entry_flag = 0, numID=tempID))
 
 ##### Below are only for training and information pages... 
 

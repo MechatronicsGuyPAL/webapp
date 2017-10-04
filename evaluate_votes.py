@@ -27,7 +27,7 @@ for n, val in enumerate(vote_list):
 
     #count votes to make sure only completed entries are modified
     entries=models.CDA.query.get(vote_list[n])
-    if (entries.var1 == 'empty'):
+    if (entries.var1 != 'empty'):
         for x, val in enumerate(votes):
             if votes[x].crater_id == vote_list[n]:
                 v_num += 1
@@ -42,16 +42,16 @@ for n, val in enumerate(vote_list):
 
 
                     
-        #record results
+        #record results: all unsure, borderline, and exception results are recorded as 'review' for super user evaluation
         if v_num >= 15:
             if (y_num >= 10):
                 entries.var1 = 'yes'
             elif (n_num >= 10):
                 entries.var1 = 'no'
             elif ( u_num >= 10):
-                entries.var1 = 'unsure'
+                entries.var1 = 'review'
             elif (((y_num + r_num) >= 6) and (n_num >= 6)):
-                entries.var1 = 'borderline'
+                entries.var1 = 'review'
             elif (((r_num + y_num) >= 10) and (r_num >= 5)):
                 entries.var1 = 'recenter'
             else:
