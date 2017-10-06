@@ -50,7 +50,8 @@ class craterfunc:
                     x2=x2, 
                     y1=y1,
                     y2=y2,
-                    var1=entries.var1 )
+                    vote_result=entries.vote_result,
+                    width_original = width_raw)
 
     def get_new_attributes(self, entries, clickX, clickY):
         x1 = entries.x1
@@ -77,8 +78,6 @@ class craterfunc:
 
         shiftX = int(((float(200 - clickX))/200.0)*width_raw)
         shiftY = int(((float(200 - clickY))/200.0)*width_raw)
-        #newX = center_x - int(shiftX*width_raw)
-        #newY = center_y + int(shiftY*width_raw)
         newX = center_x - shiftX
         newY = center_y + shiftY
         new_x_val = newX - scale_xy*width_raw
@@ -102,26 +101,33 @@ class craterfunc:
                     x2=x2_new, 
                     y1=y1_new, 
                     y2=y2_new,
-                    var1=entries.var1 )
+                    vote_result=entries.vote_result,
+                    width_original = width_raw)
 
 
     def update_count(self, entry_field,entries):
         session_num = self.session_num()
         if entry_field == "yes":
             temp_entry = "yes"
+            temp_yes = entries.results_yes + 1
+            entries.results_yes = temp_yes
         elif entry_field == "no":
             temp_entry = "no"
+            temp_no = entries.results_no + 1
+            entries.results_no = temp_no            
         elif entry_field == "unsure":
             temp_entry = "unsure"
+            temp_unsure = entries.results_unsure + 1
+            entries.results_unsure = temp_unsure
+        temp_vote = entries.votes + 1
+        entries.votes = temp_vote
+        db.session.add(entries)
         UserVote = models.Vote(crater_id = entries.id, 
                                 vote_result = temp_entry, 
                                 start_timestamp = entries.timestamp, 
                                 end_timestamp = datetime.utcnow(),
                                 session_data = session_num )
         db.session.add(UserVote)
-        temp_vote = entries.votes + 1
-        entries.votes = temp_vote
-        db.session.add(entries)
         db.session.commit()
         db.session.remove()
 
@@ -131,12 +137,13 @@ class craterfunc:
         time_since_flag = False
         while entries is None:
             test_val -= 0.05
-            entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.var1 == 'empty')).order_by(CDA.timestamp.desc()).limit(1).first()
+            entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.vote_result == None)).order_by(CDA.timestamp.desc()).limit(1).first()
             print("query, test val at {}".format(test_val))
             if ((entries is not None) and (self.query_time_since(entries) < 60)):
                     print("query time exceeded")
-                    entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.var1 == 'empty')).order_by(CDA.timestamp.desc()).limit(500)
+                    entries = CDA.query.filter(and_(CDA.IOU <= .25, CDA.score >= test_val, CDA.votes < 15, CDA.vote_result == None)).order_by(CDA.timestamp.desc()).limit(500)
                     for entry in entries:
+                        print("checking entries")
                         if ((self.query_time_since(entry) >= 60) ):
                             time_since_flag = True
                             entries = entry
@@ -145,13 +152,10 @@ class craterfunc:
                             break
                     if time_since_flag == False:
                         entries = None
- 
 
-            
-
-            entries.timestamp = datetime.utcnow()
-            db.session.add(entries)
-            db.session.commit()
+        entries.timestamp = datetime.utcnow()
+        db.session.add(entries)
+        db.session.commit()
         return entries
 
     def update_coords(self, entries, x1_new, x2_new, y1_new, y2_new):
@@ -166,6 +170,8 @@ class craterfunc:
                                 y2_new = y2_new,
                                 session_data = session_num )
         db.session.add(UserVote)
+        temp_recenter = entries.results_recenter + 1
+        entries.results_recenter = temp_recenter
         temp_vote = entries.votes + 1
         entries.votes = temp_vote
         db.session.add(entries)
@@ -181,7 +187,7 @@ class craterfunc:
 
     def super_user_query(self):
             try:
-                entries = CDA.query.filter(CDA.var1 == 'review').order_by(CDA.score.desc()).limit(1).first()
+                entries = CDA.query.filter(CDA.vote_result == 'review').order_by(CDA.score.desc()).limit(1).first()
                 entries.timestamp = datetime.utcnow()
                 db.session.add(entries)
                 db.session.commit()
@@ -198,17 +204,18 @@ class craterfunc:
             temp_entry = "no"
         elif entry_field == "unsure":
             temp_entry = "review"
-        entries.var1 = temp_entry
+        temp_SU = entries.results_SU_vote + 1
+        entries.vote_result = temp_entry
+        entries.results_SU_vote = temp_SU
         entries.timestamp = datetime.utcnow()
-
+        db.session.add(entries)
         UserVote = models.Vote(crater_id = entries.id, 
                                 vote_result = temp_entry, 
                                 start_timestamp = entries.timestamp, 
                                 end_timestamp = datetime.utcnow(),
                                 session_data = session_num,
-                                var2 = 'super_user_vote')
+                                vote_type = 'super_user_vote')
         db.session.add(UserVote)
-        db.session.add(entries)
         db.session.commit()
         db.session.remove()
 
@@ -223,9 +230,11 @@ class craterfunc:
                                 y1_new = y1_new, 
                                 y2_new = y2_new,
                                 session_data = session_num,
-                                var2 = 'super_user_vote')
+                                vote_type = 'super_user_vote')
         db.session.add(UserVote)
-        entries.var1 = 'recenter'
+        temp_SU = entries.results_SU_vote + 1
+        entries.results_SU_vote = temp_SU
+        entries.vote_result = 'recenter'
         entries.timestamp = datetime.utcnow()
         db.session.add(entries)
         db.session.commit()

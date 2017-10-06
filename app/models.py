@@ -17,6 +17,13 @@ class CDA(db.Model):
     IOU = db.Column(db.Float)
     var1 = db.Column(db.String(120))
     var2 = db.Column(db.String(120))
+    recenter_id = db.Column(db.Integer, db.ForeignKey('votes.id'), nullable = True)
+    vote_result = db.Column(db.String(120))
+    results_yes = db.Column(db.SmallInteger)
+    results_no = db.Column(db.SmallInteger)
+    results_unsure = db.Column(db.SmallInteger)
+    results_recenter = db.Column(db.SmallInteger)
+    results_SU_vote = db.Column(db.SmallInteger)
 
     def __repr__(self):
         return '<CDA %r>' % self.id
@@ -53,6 +60,8 @@ class Vote(db.Model):
     session_data = db.Column(db.String(120))
     var1 = db.Column(db.String(120))
     var2 = db.Column(db.String(120))    
+    recenter_zscore = db.Column(db.Float)
+    vote_type = db.Column(db.String(120))
 
     def __repr__(self):
         return '<Vote %r>' % self.id
