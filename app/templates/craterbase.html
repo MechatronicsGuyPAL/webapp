@@ -18,6 +18,12 @@
         background: url("static/{{item.image}}") -{{attributes.x_val}}px -{{attributes.y_val}}px;
         zoom: {{attributes.zoom}};
       }
+
+      #picture_original {
+        width: {{attributes.width_original}}px;
+        height: {{attributes.width_original}}px;
+        background: url("static/{{item.image}}") -{{attributes.x1}}px -{{attributes.y1}}px;
+      }
     </style>
 
     <script type= text/javascript src="{{ url_for('static', filename='jquery.js') }}"></script>

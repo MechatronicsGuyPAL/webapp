@@ -24,10 +24,13 @@ for n, val in enumerate(vote_list):
     n_num = 0
     u_num = 0
     r_num = 0
+    SU_num = 0
+    result = 'none'
 
     #count votes to make sure only completed entries are modified
     entries=models.CDA.query.get(vote_list[n])
-    if (entries.var1 != 'empty'):
+    print("crater id {}".format(entries.id))
+    if (entries.vote_result == None):
         for x, val in enumerate(votes):
             if votes[x].crater_id == vote_list[n]:
                 v_num += 1
@@ -39,24 +42,33 @@ for n, val in enumerate(vote_list):
                     u_num +=1
                 elif votes[x].vote_result == 'recenter':
                     r_num +=1
+                if votes[x].vote_type =='super_user_vote':
+                    SU_num +=1
 
 
                     
         #record results: all unsure, borderline, and exception results are recorded as 'review' for super user evaluation
         if v_num >= 15:
+            
             if (y_num >= 10):
-                entries.var1 = 'yes'
+                result = 'yes'
             elif (n_num >= 10):
-                entries.var1 = 'no'
+                result = 'no'
             elif ( u_num >= 10):
-                entries.var1 = 'review'
-            elif (((y_num + r_num) >= 6) and (n_num >= 6)):
-                entries.var1 = 'review'
+                result = 'review'
             elif (((r_num + y_num) >= 10) and (r_num >= 5)):
-                entries.var1 = 'recenter'
+                result = 'recenter'
             else:
-                entries.var1 = 'review'
-            print("Crater ID {}: Vote result {}".format(entries.id, entries.var1))
+                result = 'review'
+            entries.vote_result = result
+
+            print("Crater ID {}: Vote result {}: yes {}: no {}: unsure {}: recenter {}: SU {}".format(entries.id, 
+                                                                                                        entries.vote_result,
+                                                                                                        entries.results_yes,
+                                                                                                        entries.results_no,
+                                                                                                        entries.results_unsure,
+                                                                                                        entries.results_recenter,
+                                                                                                        entries.results_SU_vote))
             db.session.add(entries)
 print('Committing vote results')
 db.session.commit()
@@ -64,7 +76,7 @@ db.session.remove()
 
 #determine appropriate recenter vote to use as the entry on "recenter" status CDA entries
 print('Querrying recenter results')
-recenters = models.CDA.query.filter(and_(models.CDA.var1 == 'recenter', models.CDA.var2 == 'empty'))
+recenters = models.CDA.query.filter(and_(models.CDA.vote_result == 'recenter', models.CDA.recenter_id == None))
 for recenter_entry in recenters:
     print('recenter_id is {}'.format(recenter_entry.id))
     temp_id = recenter_entry.id
@@ -111,6 +123,8 @@ for recenter_entry in recenters:
             print("divide by zero error, StdDev_y is {}".format(stddev_y))
             tempy = 0.0
         temp_zscore = tempx + tempy
+        recenter_votes[c].recenter_zscore = temp_zscore
+        db.session.add(recenter_votes[c])
         if (temp_zscore < z_score):
             z_score = temp_zscore
             recenter_id = recenter_votes[c].id
@@ -119,7 +133,7 @@ for recenter_entry in recenters:
                                                                                                 recenter_votes[c].y1_new,
                                                                                                 z_score))
 
-    recenter_entry.var2 = str(recenter_id)
+    recenter_entry.recenter_id = recenter_id
     db.session.add(recenter_entry)
 print('Committing recenter location')
 db.session.commit()

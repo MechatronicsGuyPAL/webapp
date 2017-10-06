@@ -14,6 +14,7 @@ total_border = 0
 total_recenter = 0
 total_unsure = 0
 total_review = 0
+total_SU = 0
 
 for i, val in enumerate(votes):
     if not votes[i].crater_id in vote_list:
@@ -40,12 +41,14 @@ for n, val in enumerate(vote_list):
                 u_num +=1
             elif votes[x].vote_result == 'recenter':
                 r_num +=1
-                print("Recenter crater {}: ({},{}), ({},{}) var1: {}".format(votes[x].crater_id, 
+                print("Recenter crater {}: ({},{}), ({},{}) z-score: {}".format(votes[x].crater_id, 
                                                                     votes[x].x1_new, 
                                                                     votes[x].y1_new, 
                                                                     votes[x].x2_new, 
                                                                     votes[x].y2_new,
-                                                                    votes[x].var1))
+                                                                    votes[x].recenter_zscore))
+            if votes[x].vote_type == 'super_user_vote':
+                total_SU +=1
 
     if v_num >= 15:
         finished_craters += 1
@@ -63,7 +66,7 @@ for n, val in enumerate(vote_list):
             total_review += 1
     total_votes += v_num
  
-    print("______ Result Crater ID {}: Yes: {}, No: {}, Unsure: {}, Re_Center {}, Total: {}".format(vote_list[n],
+    print("______ Result Crater ID {}: Yes: {}, No: {}, Unsure: {}, Re_Center: {}, Total: {}".format(vote_list[n],
                                                                                         y_num,
                                                                                         n_num,
                                                                                         u_num,
@@ -72,12 +75,13 @@ for n, val in enumerate(vote_list):
 
 print("{} total craters evaluated".format(len(vote_list)))
 print("Finished craters: {}, total votes: {}".format(finished_craters, total_votes))
-print("Totals: Yes: {}, No: {}, Recenter: {}, Unsure: {}, Border-line: {}, Review: {} ".format(total_yes, 
+print("Totals: Yes: {}, No: {}, Recenter: {}, Unsure: {}, Border-line: {}, Review: {}, Super User Votes: {} ".format(total_yes, 
                                                                                     total_no, 
                                                                                     total_recenter,
                                                                                     total_unsure,
                                                                                     total_border,
-                                                                                    total_review))
+                                                                                    total_review,
+                                                                                    total_SU))
 
 
 
