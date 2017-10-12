@@ -176,17 +176,20 @@ def review():
         return render_template('review.html', title='review')
 
     if request.method == "POST":
-        password = False
-        try:
-            text = request.form['text']
-            if text == "geologyrocks":
-                password = True
-        except:
-            password = False
-        if password == True:
-            return redirect(url_for('super_user_crater', new_entry_flag = 1))
+        if request.form['selection']=='Crater_Lookup':
+            return redirect(url_for('crater_lookup'))
         else:
-            return redirect(url_for('index'))
+            password = False
+            try:
+                text = request.form['text']
+                if text == "geologyrocks":
+                    password = True
+            except:
+                password = False
+            if (password == True):
+                return redirect(url_for('super_user_crater', new_entry_flag = 1))
+            else:
+                return redirect(url_for('index'))
 
 
 @app.route('/super_user_crater', methods=['GET', 'POST'])
@@ -314,6 +317,49 @@ def super_user_update_confirm():
         elif request.form['selection']=='Cancel':
             tempID = request.form.get(('numID'), type = int)
             return redirect(url_for('super_user_crater', new_entry_flag = 0, numID=tempID))
+
+
+@app.route('/crater_lookup', methods=['GET', 'POST'])
+def crater_lookup():
+    CF=crater_funcs.craterfunc()
+    review_nums = []
+    reviews = models.CDA.query.filter(models.CDA.vote_result == 'review').order_by(models.CDA.id)
+    for review in reviews:
+        review_nums.append(review.id)
+
+    if request.method == "GET":
+            entries = CF.super_user_query()
+            attributes=CF.get_attributes(entries)
+            return render_template('crater_lookup.html',
+                                    title='crater_lookup',
+                                    item=entries, 
+                                    attributes = attributes, 
+                                    craters_for_review = review_nums)
+
+
+
+    elif request.method == "POST":
+        if request.form['selection']=='Review':
+            return redirect(url_for('review'))
+
+        else:
+            try:
+                temp = request.form.get(('craterID'),type = int)
+                reviewID = int(temp)
+            except:
+                reviewID = None
+
+            entries=models.CDA.query.get(reviewID)
+            if entries == None:
+                entries=CF.super_user_query()
+            attributes=CF.get_attributes(entries)
+            return render_template('crater_lookup.html',
+                                    title='crater_lookup',
+                                    item=entries, 
+                                    attributes = attributes,
+                                    craters_for_review = review_nums)
+
+
 
 ##### Below are only for training and information pages... 
 
