@@ -186,13 +186,15 @@ class craterfunc:
         return minutes
 
     def super_user_query(self):
+            #entries = CDA.query.filter(and_(CDA.vote_result == None, CDA.score <= 0.36, CDA.score >= 0.34)).limit(1).first()
             try:
-                entries = CDA.query.filter(CDA.vote_result == 'review').order_by(CDA.score.desc()).limit(1).first()
+                #entries = CDA.query.filter(CDA.vote_result == 'review').order_by(CDA.score.desc()).limit(1).first()
+                entries = CDA.query.filter(and_(CDA.vote_result == None, CDA.score <= 0.47, CDA.score >= 0.43,CDA.IOU <= .25)).limit(1).first()
                 entries.timestamp = datetime.utcnow()
                 db.session.add(entries)
                 db.session.commit()
             except:
-                entries = None
+                entries = self.query_database()
             return entries
 
 
@@ -204,7 +206,10 @@ class craterfunc:
             temp_entry = "no"
         elif entry_field == "unsure":
             temp_entry = "review"
-        temp_SU = entries.results_SU_vote + 1
+        if entries.results_SU_vote != None:
+            temp_SU = entries.results_SU_vote + 1
+        else:
+            temp_SU = 1
         entries.vote_result = temp_entry
         entries.results_SU_vote = temp_SU
         entries.timestamp = datetime.utcnow()
@@ -232,7 +237,10 @@ class craterfunc:
                                 session_data = session_num,
                                 vote_type = 'super_user_vote')
         db.session.add(UserVote)
-        temp_SU = entries.results_SU_vote + 1
+        if entries.results_SU_vote != None:
+            temp_SU = entries.results_SU_vote + 1
+        else:
+            temp_SU = 1
         entries.results_SU_vote = temp_SU
         entries.vote_result = 'recenter'
         entries.timestamp = datetime.utcnow()

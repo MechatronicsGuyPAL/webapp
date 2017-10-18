@@ -9,14 +9,14 @@ from app import db, models
 #insert values for desired Intersection Over Union percentage. 
 #Each value will produce a dataset for graphing an ROC curve.
 #each value should be greater than 0 and less than 1.
-IOU_threshold_list = [0.2, 0.25, 0.3, 0.35]
+IOU_threshold_list = [0.2, 0.25, 0.3]
 
 #Insert the number of data points you want.
-number_data_points = 100
+number_data_points = 1000
 
 #Use this variable to consider the evaluated results
 #set to True to use the results, set to False to ignore the results
-use_evaluated_results = False
+use_evaluated_results = True
 
 
 
@@ -124,24 +124,25 @@ def my_range(start, end, step):
 
 
 step_size = 1.0/float(number_data_points)
-IOU_threshold = .35
 
-if use_evaluated_results == True:
-    name_string = '_evaluated_'
-else:
-    name_string = '_original_'
-IOU_string = str(int(IOU_threshold*100.0))
-file_name_path = 'data/csvs/ROC'+name_string+IOU_string
 
-f_ROC = open(file_name_path,'w')
-f_ROC.write('Confidence,TPR,FPR\n')
+for IOU_threshold in IOU_threshold_list:
+    if use_evaluated_results == True:
+        name_string = '_evaluated_'
+    else:
+        name_string = '_original_'
+    IOU_string = str(int(IOU_threshold*100.0))
+    file_name_path = 'data/csvs/ROC'+name_string+IOU_string
 
-for confidence in my_range(0, 1, step_size):
-    tpr = TPR(gt_len, cda, confidence, IOU_threshold, use_evaluated_results)
-    fpr = FPR(cda, confidence, IOU_threshold, use_evaluated_results)
-    print("Confidence, {}, TPR, {}, FPR, {}, end/n".format(confidence, tpr, fpr))
-    f_ROC.write("{},{},{}\n".format(confidence,tpr,fpr))
-f_ROC.close()
+    f_ROC = open(file_name_path,'w')
+    f_ROC.write('Confidence,TPR,FPR\n')
+
+    for confidence in my_range(0, 0.99, step_size):
+        tpr = TPR(gt_len, cda, confidence, IOU_threshold, use_evaluated_results)
+        fpr = FPR(cda, confidence, IOU_threshold, use_evaluated_results)
+        print("Confidence, {}, TPR, {}, FPR, {}, end/n".format(confidence, tpr, fpr))
+        f_ROC.write("{},{},{}\n".format(confidence,tpr,fpr))
+    f_ROC.close()
             
 # GT has 31132 entries
 # CDA has 82903 entries
