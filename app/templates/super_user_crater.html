@@ -3,7 +3,7 @@
 
 {% block content %}
   <h1>WARNING: This page is only meant for professional use.<br>
-  Do not make a selection unless you are sure of your answer.<br><br></h1>
+  Do not make a selection unless you are sure of your answer.</h1>
 
     <div class="container">
       <form action"." method="post" >
@@ -11,7 +11,7 @@
         <input type="radio" name="selection" value="Yes"> Yes<br>
         <input type="radio" name="selection" value="No"> No<br>
         <input type="radio" name="selection" value="Re-Center"> Re-Center<br>
-        <input type="hidden" name="numID" value="{{item.id}}"><br><br>
+        <input type="hidden" name="numID" value="{{item.id}}"><br>
         <input type="submit"><br>
       </form>
     </div>
@@ -24,6 +24,7 @@ Reminder: Prolonged sitting and computer use may have adverse health effects, pl
 
     <div>
            Prediction Status: {{attributes.vote_result}}<br>
+           Certainty:{{ item.score  }}<br>
            Zoom:{{ attributes.zoom }}<br>
            X val:{{ attributes.x_val }}<br>
            Y val:{{ attributes.y_val }}<br>
@@ -31,7 +32,7 @@ Reminder: Prolonged sitting and computer use may have adverse health effects, pl
 
            Image name:{{ item.image }}<br>
            ID:{{ item.id }}<br>
-           Certainty:{{ item.score  }}<br>
+           
            
 
     </div><br>

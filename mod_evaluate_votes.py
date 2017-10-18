@@ -1,7 +1,8 @@
 #!flask/bin/python
 from app import db, models
 from sqlalchemy import and_
-#this script evaluates the collected votes and assigns the result status to the corresponding CDA entry
+#this script evaluates the collected votes and assigns the result status to the corresponding CDA entry.
+#CDA entries that have already been evaluated will not be re-evaluated
 
 vote_list = []
 
@@ -78,7 +79,7 @@ db.session.remove()
 print('Querrying recenter results')
 recenters = models.CDA.query.filter(and_(models.CDA.vote_result == 'recenter', models.CDA.recenter_id == None))
 for recenter_entry in recenters:
-    print('recenter_id is {}'.format(recenter_entry.id))
+    print('recentered crater id is {}'.format(recenter_entry.id))
     temp_id = recenter_entry.id
     recenter_votes = models.Vote.query.filter(and_(models.Vote.crater_id == temp_id, models.Vote.vote_result == 'recenter'))
 
@@ -137,4 +138,6 @@ for recenter_entry in recenters:
     db.session.add(recenter_entry)
 print('Committing recenter location')
 db.session.commit()
+
+
 

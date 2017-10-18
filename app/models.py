@@ -1,7 +1,9 @@
 from app import db
-#var1 field in CDA is used to hold the result of the vote process, [yes,no,unsure,borderline,review,recenter]
-#var2 field in CDA is used in 'recenter' results to hold the ID of the corresponding vote with the best recenter coordinates
-#var2 is empty for entries not labeled 'recenter'
+
+#var1 and var2 fields were added early in the project incase extra fields were
+#needed for unforseen issues. At present they do not hold any imortant data and can
+#be written over or ignored.
+
 class CDA(db.Model):
     __tablename__='CDA_results'
     id = db.Column(db.Integer, primary_key=True)
@@ -25,6 +27,8 @@ class CDA(db.Model):
     results_recenter = db.Column(db.SmallInteger)
     results_SU_vote = db.Column(db.SmallInteger)
 
+
+
     def __repr__(self):
         return '<CDA %r>' % self.id
 
@@ -42,9 +46,6 @@ class GroundTruth(db.Model):
     def __repr__(self):
         return '<GroundTruth %r>' % self.id
 
-#var1 in Vote is used to hold the  combined z-score of the xy recenter coordinates for recenter finished craters
-#var2 will hold the identifier 'super_user_vote' to identify a super user vote on a crater. A single vote by a super user will 
-#immediately update the crater entry result field so that crater will not need 15 user votes. 
 
 class Vote(db.Model):
     __tablename__='votes'
@@ -59,9 +60,10 @@ class Vote(db.Model):
     y2_new = db.Column(db.SmallInteger, nullable =True)
     session_data = db.Column(db.String(120))
     var1 = db.Column(db.String(120))
-    var2 = db.Column(db.String(120))    
+    var2 = db.Column(db.String(120))
     recenter_zscore = db.Column(db.Float)
     vote_type = db.Column(db.String(120))
+
 
     def __repr__(self):
         return '<Vote %r>' % self.id
