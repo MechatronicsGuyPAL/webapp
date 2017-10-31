@@ -1,70 +1,68 @@
 #!flask/bin/python
 from app import db, models
+from sqlalchemy import and_, or_
+from datetime import datetime
+
+
+#this module outputs csv files of the finished craters and the current votes to the webapp/data/csvs directory
+
+
+#choose which databases to export, set to True to export, or False to skip
+export_craters = True
+export_votes = True
+
+#change these fields to contain the filenames you want
+crater_CSV_filename = 'no_conflict_craters'
+votes_CSV_filename = 'default_votes_csv_filename'
 
 
 
+#*************************************************
+#       This code should not be altered
+#*************************************************
+#export crater CSV
+if export_craters == True:
 
-cda = models.CDA.query.all()
+    print('starting predictions query')
+    #fin_craters = models.CDA.query.filter(models.CDA.vote_result != None).order_by(models.CDA.id)
+    fin_craters = models.CDA.query.filter(or_(models.CDA.var2 == 'yes',models.CDA.var2 == 'no',models.CDA.var2 == 'recenter'))
+    #fin_craters = models.CDA.query.all()
 
-unions = 0
-conflicts = 0
-count001 = 0
-count005 = 0
-count01 = 0
-count02 = 0
-count03 = 0
-count04 = 0
-count05 = 0
-count06 = 0
-count07 = 0
-countGT01 = 0
+    #open file and write fields followed by recursively writing the crater entries
+    print('writing csv document')
+    crater_file_path = 'data/csvs/'+crater_CSV_filename
+    f_crater = open(crater_file_path,'w')
+    f_crater.write('id,image,x1,y1,x2,y2,score,IOU,Var2 - vote_result,votes,votes_yes,votes_no,votes_unsure,votes_recenter,votes_SU,recenter_id,r_zscore,r_x1,r_y1,r_x2,r_y2\n')
 
-for n, val in enumerate(cda):
-    score = cda[n].score
-    if (cda[n].GT_conflict == False):
-        unions += 1
-    else:
-        conflicts += 1
-        if ((score >= 0.01)):
-            countGT01 += 1
-            count001 += 1
-            if ((score >= 0.05)):
-                count005 += 1
-                count001 -= 1
-                if ((score >= 0.1)):
-                    count01 += 1
-                    count005 -= 1
-                    if ((score >= 0.2)):
-                        count02 += 1
-                        count01 -= 1
-                        if ((score >= 0.3)):
-                            count03 += 1
-                            count02 -= 1
-                            if ((score >= 0.4)):
-                                count04 += 1
-                                count03 -= 1
-                                if ((score >= 0.5)):
-                                    count05 += 1
-                                    count04 -= 1
-                                    if ((score >= 0.6)):
-                                        count06 += 1
-                                        count05 -= 1
-                                        if ((score >= 0.7)):
-                                            count07 += 1
-                                            count06 -= 1
+    for crater in fin_craters:
+        rx1 = None
+        ry1 = None
+        rx2 = None
+        ry2 = None
+        r_zscore = None
 
 
 
-count0 = conflicts - countGT01
+        f_crater.write('{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(crater.id,
+                                                                                        crater.image,
+                                                                                        crater.x1,
+                                                                                        crater.y1,
+                                                                                        crater.x2,
+                                                                                        crater.y2,
+                                                                                        crater.score,
+                                                                                        crater.IOU,
+                                                                                        crater.var2,
+                                                                                        crater.votes,
+                                                                                        crater.results_yes,
+                                                                                        crater.results_no,
+                                                                                        crater.results_unsure,
+                                                                                        crater.results_recenter,
+                                                                                        crater.results_SU_vote,
+                                                                                        crater.recenter_id,
+                                                                                        r_zscore,
+                                                                                        rx1,
+                                                                                        ry1,
+                                                                                        rx2,
+                                                                                        ry2))
 
-print("Unions : {}, Conflicts: {}".format(unions, conflicts))
-print("x > 0.70 confidence: {} conflicts".format(count07))
-print("0.70 > x > 0.60 confidence: {} conflicts".format(count06))
-print("0.60 > x > 0.50 confidence: {} conflicts".format(count05))
-print("0.50 > x > 0.40 confidence: {} conflicts".format(count04))
-print("0.40 > x > 0.30 confidence: {} conflicts".format(count03))
-print("0.30 > x > 0.20 confidence: {} conflicts".format(count02))
-print("0.20 > x > 0.10 confidence: {} conflicts".format(count01))
-print("0.10 > x > 0.05 confidence: {} conflicts".format(count005))
-print("0.05 > x > 0.01 confidence: {} conflicts".format(count001))
-print("x < 0.01 confidence: {} conflicts".format(count0))
+    f_crater.close()

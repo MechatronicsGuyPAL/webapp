@@ -12,7 +12,7 @@ export_craters = False
 export_votes = True
 
 #change these fields to contain the filenames you want
-crater_CSV_filename = 'full_crater_csv_filename'
+crater_CSV_filename = 'default_crater_csv_filename'
 votes_CSV_filename = 'default_votes_csv_filename'
 
 
@@ -89,7 +89,7 @@ if export_votes == True:
         num_seconds = int(time_since.total_seconds())
 
 
-        f_votes.write('{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(vote.crater_id,
+        f_votes.write('{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(vote.crater_id,
                                                                     vote.id,
                                                                     vote.vote_result,
                                                                     vote.recenter_zscore,

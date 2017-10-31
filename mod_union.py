@@ -2,18 +2,15 @@
 from app import db, models
 from pprint import pprint
 
-#Four checks for determining union
-#--1: same image name
-#--2: xA <= xB , and yA <= yB
-#--3: boxes similar sizes 1:4 - 4:1
-#--4: IOU >= 0.5
+
 
 cda_list =[]
 gt_list = []
 IOU_count = 0
 
 
-
+#this function was modeled after the free resouce found at
+#https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/
 def bb_intersection_over_union(cda, GT):
     iou = 0
 
@@ -28,7 +25,7 @@ def bb_intersection_over_union(cda, GT):
     if ((xA <= xB) and (yA <= yB)):
         #check that the boxes are similar sizes
         size_ratio = (cda.x2-cda.x1) / float(GT.x2-GT.x1)
-        if ((size_ratio >= 0.1) and (size_ratio <= 10)):
+        if ((size_ratio >= 0.25) and (size_ratio <= 4)):
             # compute the area of intersection rectangle
             interArea = (xB - xA + 1) * (yB - yA + 1)
             # compute the area of both the prediction and ground-truth
@@ -43,21 +40,10 @@ def bb_intersection_over_union(cda, GT):
 
             #print("IA:{}, A:{}, B:{}".format(interArea, boxAArea, boxBArea))
 
-    # return the intersection over union value
+    
     return iou
 
 
-
-
-def conflict_count(confidence):
-    cda2 = models.CDA.query.all()
-    count = 0
-    for n, val in enumerate(cda2):
-        if ((cda2[n].score >= confidence) and (cda2[n].GT_conflict == True)):
-            count += 1
-            #print("CDA ID:{}, n:{}, Conflict: {}, Confidence: {}".format(cda2[n].id,n,cda2[n].GT_conflict,cda2[n].score))
-    print("There are {} instances at {} confidence".format(count,confidence))
-    return count
 
 
 
@@ -77,15 +63,14 @@ for n, val in enumerate(cda_list):
     for x, val in enumerate(cda_limited):
         iou_max = 0.0
         print("processing entry {}, current unions {}.".format(cda_limited[x].id, IOU_count))
-        cda_limited[x].var2 = "0.0"
+        cda_limited[x].IOU = 0.0
         db.session.add(cda_limited[x])
         for y, val in enumerate(GT_limited):
             iou = bb_intersection_over_union(cda_limited[x], GT_limited[y])
             if iou > iou_max:
                 iou_max = iou
                 IOU_count += 1
-                cda_limited[x].var2 = str(iou)
+                cda_limited[x].IOU = iou
                 db.session.add(cda_limited[x])
     db.session.commit()
-
 
