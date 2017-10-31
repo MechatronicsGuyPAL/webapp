@@ -21,16 +21,16 @@ create_images = True
 
 #Image secetion based on list printed to terminal window. This section only applies when "create_images = True"
 #Use 'select type' to choose which images you want created. choices are 'all', 'individual', or 'range'
-select_type = 'individual'
+select_type = 'range'
 
 #for "select_type = individual", 
 #enter the desired 'list position' numbers from the list printed to the erminal window, for example [0,1,2,5,7,12]
-select_individual_images = [6]
+select_individual_images = [1]
 
 #for "select_type = range", enter the 'list position' numbers from the list printed to the terminal window,
 #for example, 'select_range_start = 5', 'select_range_end = 25', to create images 5-25 from the list.
 select_range_start = 0
-select_range_end = 0
+select_range_end = 25
 
 
 
@@ -148,19 +148,19 @@ if (create_images == True):
             
             font = cv.FONT_HERSHEY_COMPLEX_SMALL
             for i, val in enumerate(rect_short):
-                # if (rect_short[i].vote_result != 'recenter'):
-                #     x1 = rect_short[i].x1
-                #     y1 = rect_short[i].y1
-                #     x2 = rect_short[i].x2
-                #     y2 = rect_short[i].y2
-                # else:
-                #     recenter_vals = models.Vote.query.get(rect_short[i].recenter_id)
-                #     print('-- recenter query -- ')
-                #     x1 = recenter_vals.x1_new
-                #     y1 = recenter_vals.y1_new
-                #     x2 = recenter_vals.x2_new
-                #     y2 = recenter_vals.y2_new
-                #     print("vote: {}, Original: {}, X1: {}".format(recenter_vals.x1_new, rect_short[i].x1,x1))
+                if (rect_short[i].vote_result != 'recenter'):
+                    x1 = rect_short[i].x1
+                    y1 = rect_short[i].y1
+                    x2 = rect_short[i].x2
+                    y2 = rect_short[i].y2
+                else:
+                    recenter_vals = models.Vote.query.get(rect_short[i].recenter_id)
+                    print('-- recenter query -- ')
+                    x1 = recenter_vals.x1_new
+                    y1 = recenter_vals.y1_new
+                    x2 = recenter_vals.x2_new
+                    y2 = recenter_vals.y2_new
+                    print("vote: {}, Original: {}, X1: {}".format(recenter_vals.x1_new, rect_short[i].x1,x1))
 
                 x1 = rect_short[i].x1
                 y1 = rect_short[i].y1
