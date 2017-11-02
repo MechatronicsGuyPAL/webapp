@@ -18,7 +18,7 @@ delete_votes = False
 
 #name of JSON files in the 'jsons' directory, with CDA prediction data and ground truth data
 #replace these filenames to erase the previous databases and populate with new data 
-CDA_filename = "webapp_data_V2.json"
+CDA_filename = "CDA_predictions_full.json"
 GroundTruth_filename = "groundtruth_full.json"
 
 

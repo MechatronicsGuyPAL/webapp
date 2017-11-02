@@ -8,12 +8,12 @@ from datetime import datetime
 
 
 #choose which databases to export, set to True to export, or False to skip
-export_craters = False
+export_craters = True
 export_votes = True
 
 #change these fields to contain the filenames you want
-crater_CSV_filename = 'default_crater_csv_filename'
-votes_CSV_filename = 'default_votes_csv_filename'
+crater_CSV_filename = 'crater_csv_10_2017'
+votes_CSV_filename = 'vote_csv_10_2017'
 
 
 
@@ -24,12 +24,12 @@ votes_CSV_filename = 'default_votes_csv_filename'
 if export_craters == True:
 
     print('starting predictions query')
-    #fin_craters = models.CDA.query.filter(models.CDA.vote_result != None).order_by(models.CDA.id)
-    fin_craters = models.CDA.query.all()
+    fin_craters = models.CDA.query.filter(models.CDA.vote_result != None).order_by(models.CDA.id)
+    #fin_craters = models.CDA.query.all()
 
     #open file and write fields followed by recursively writing the crater entries
     print('writing csv document')
-    crater_file_path = 'data/csvs/'+crater_CSV_filename
+    crater_file_path = 'data/csvs/'+crater_CSV_filename+'.txt'
     f_crater = open(crater_file_path,'w')
     f_crater.write('id,image,x1,y1,x2,y2,score,IOU,vote_result,votes,votes_yes,votes_no,votes_unsure,votes_recenter,votes_SU,recenter_id,r_zscore,r_x1,r_y1,r_x2,r_y2\n')
 
@@ -80,7 +80,7 @@ if export_votes == True:
 
     #open file and write fields followed by recursively writing the crater entries
     print('writing csv document')
-    votes_file_path = 'data/csvs/'+votes_CSV_filename
+    votes_file_path = 'data/csvs/'+votes_CSV_filename+'.txt'
     f_votes = open(votes_file_path,'w')
     f_votes.write('crater id,vote id,result,z-score,x1_new,y1_new,x2_new,y2_new,session data,vote type, start timestamp, end timestamp, total seconds\n')
 

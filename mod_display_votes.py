@@ -30,8 +30,7 @@ select_individual_images = [1]
 #for "select_type = range", enter the 'list position' numbers from the list printed to the terminal window,
 #for example, 'select_range_start = 5', 'select_range_end = 25', to create images 5-25 from the list.
 select_range_start = 0
-select_range_end = 25
-
+select_range_end = 35
 
 
 
@@ -162,10 +161,6 @@ if (create_images == True):
                     y2 = recenter_vals.y2_new
                     print("vote: {}, Original: {}, X1: {}".format(recenter_vals.x1_new, rect_short[i].x1,x1))
 
-                x1 = rect_short[i].x1
-                y1 = rect_short[i].y1
-                x2 = rect_short[i].x2
-                y2 = rect_short[i].y2
 
                 no_num = rect_short[i].results_no
                 if no_num == None:
