@@ -52,7 +52,7 @@ for b, val in enumerate(image_list):
         jsonfile.write(',')
 
     jsonfile.write('\n{{\n"image_path": "{}",\n"rects": ['.format(image_list[b]))
-
+    first_entry_flag = True
     for GT_entry in GT_short:
         if first_entry_flag == False:
             jsonfile.write(',')
@@ -61,7 +61,7 @@ for b, val in enumerate(image_list):
         jsonfile.write('"x1": {}.0,\n'.format(GT_entry.x1))
         jsonfile.write('"x2": {}.0,\n'.format(GT_entry.x2))
         jsonfile.write('"y1": {}.0,\n'.format(GT_entry.y1))
-        jsonfile.write('"y2": {}.0,\n'.format(GT_entry.y2))
+        jsonfile.write('"y2": {}.0\n'.format(GT_entry.y2))
         jsonfile.write('}')
 
     if (type(CDA_short) != None): 
@@ -83,7 +83,7 @@ for b, val in enumerate(image_list):
             jsonfile.write('"x1": {}.0,\n'.format(x1))
             jsonfile.write('"x2": {}.0,\n'.format(x2))
             jsonfile.write('"y1": {}.0,\n'.format(y1))
-            jsonfile.write('"y2": {}.0,\n'.format(y2))
+            jsonfile.write('"y2": {}.0\n'.format(y2))
             jsonfile.write('}')
 
     jsonfile.write('\n]\n}')
